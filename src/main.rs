@@ -4,7 +4,9 @@ mod options;
 
 use std::io::{self, Write};
 
-use options::CountType;
+use unicode_width::UnicodeWidthStr;
+
+use crate::options::CountType;
 
 fn main() {
     let options = match options::get() {
@@ -22,6 +24,15 @@ fn main() {
     chain.learn(lipsum::LOREM_IPSUM);
     chain.learn(lipsum::LIBER_PRIMUS);
 
+    // Compute width to wrap content.
+    let wrap_width = match options.wrap {
+        Some(w) => w,
+        None => match terminal_size::terminal_size() {
+            Some((terminal_size::Width(w), _)) => w as usize,
+            None => 80,
+        },
+    };
+
     // Use buffered output.
     let stdout_handle = io::stdout();
     let mut stdout = io::BufWriter::new(stdout_handle.lock());
@@ -34,7 +45,27 @@ fn main() {
         }
     }
 
+    let mut column = 0;
     let mut count = 0;
+
+    macro_rules! newline {
+        () => {
+            column = 0;
+            w!("\n");
+        };
+    }
+
+    macro_rules! space {
+        () => {
+            column += 1;
+            if column >= wrap_width {
+                newline!();
+            } else {
+                w!(" ");
+            }
+        };
+    }
+
     let mut sentence_start = true;
 
     for word in chain.iter() {
@@ -48,7 +79,11 @@ fn main() {
             break;
         }
 
-        // TODO wrap content
+        // New line if the new word exceeds wrap_width.
+        let word_width = UnicodeWidthStr::width(word);
+        if column + word_width >= wrap_width {
+            newline!();
+        }
 
         if sentence_start {
             // Convert the first letter in the sentence to uppercase.
@@ -60,17 +95,19 @@ fn main() {
                 }
             }
         } else {
-            w!(" {}", word);
+            if column > 0 {
+                space!();
+            }
+
+            w!("{}", word);
         }
 
         sentence_start = word.ends_with('.');
         if sentence_start {
-            w!(" ");
+            space!();
         }
-    }
 
-    if !sentence_start {
-        w!(".");
+        column += word_width;
     }
 
     w!("\n");
