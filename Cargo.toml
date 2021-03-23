@@ -5,3 +5,4 @@ authors = ["ayosec@gmail.com"]
 edition = "2018"
 
 [dependencies]
+lipsum = "0.7.0"

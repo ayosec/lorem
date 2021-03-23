@@ -6,17 +6,17 @@ const HELP: &str = include_str!("HELP.txt");
 
 #[derive(Debug)]
 pub struct Options {
-    source: Source,
+    pub source: Source,
 
-    count_type: CountType,
+    pub count_type: CountType,
 
-    count: usize,
+    pub count: usize,
 
-    wrap: Option<usize>,
+    pub wrap: Option<usize>,
 }
 
 #[derive(Debug)]
-enum Source {
+pub enum Source {
     Lipsum,
 
     Random,
@@ -25,7 +25,7 @@ enum Source {
 }
 
 #[derive(Debug)]
-enum CountType {
+pub enum CountType {
     Chars,
 
     Words,
