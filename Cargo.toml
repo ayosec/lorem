@@ -3,6 +3,7 @@ name = "lorem"
 version = "0.1.0"
 authors = ["ayosec@gmail.com"]
 edition = "2018"
+license = "Apache-2.0"
 
 [dependencies]
 lipsum = "0.7.0"
