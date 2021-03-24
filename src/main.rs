@@ -33,7 +33,10 @@ fn main() {
             chain.learn(&chain_storage);
         }
 
-        _ => todo!(),
+        Source::File(file) => {
+            chain_storage = std::fs::read_to_string(file).unwrap();
+            chain.learn(&chain_storage);
+        }
     }
 
     // Compute width to wrap content.
