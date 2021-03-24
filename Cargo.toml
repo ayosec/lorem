@@ -3,10 +3,15 @@ name = "lorem"
 version = "0.1.0"
 authors = ["ayosec@gmail.com"]
 edition = "2018"
+description = "Random text generator"
 license = "Apache-2.0"
+readme = "README.md"
 
 [dependencies]
 lipsum = "0.7.0"
 rand = "0.8.3"
 terminal_size = "0.1.16"
 unicode-width = "0.1.8"
+
+[package.metadata.deb]
+extended-description = "Generate text using words from Lorem Ipsum text, random words, or words from a file"
