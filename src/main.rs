@@ -1,12 +1,13 @@
 //! CLI program to generate random text.
 
 mod options;
+mod randstr;
 
 use std::io::{self, Write};
 
 use unicode_width::UnicodeWidthStr;
 
-use crate::options::CountType;
+use crate::options::{CountType, Source};
 
 fn main() {
     let options = match options::get() {
@@ -18,11 +19,22 @@ fn main() {
     };
 
     // Build words generator.
+    let chain_storage;
     let mut chain = lipsum::MarkovChain::new();
 
-    // TODO change learn from options.source
-    chain.learn(lipsum::LOREM_IPSUM);
-    chain.learn(lipsum::LIBER_PRIMUS);
+    match options.source {
+        Source::Lipsum => {
+            chain.learn(lipsum::LOREM_IPSUM);
+            chain.learn(lipsum::LIBER_PRIMUS);
+        }
+
+        Source::Random => {
+            chain_storage = randstr::generate();
+            chain.learn(&chain_storage);
+        }
+
+        _ => todo!(),
+    }
 
     // Compute width to wrap content.
     let wrap_width = match options.wrap {
