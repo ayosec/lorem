@@ -84,9 +84,8 @@ fn main() {
     let mut sentence_start = true;
 
     for word in chain.iter() {
-        let num_chars = word.chars().count();
         count += match options.count_type {
-            CountType::Chars => num_chars,
+            CountType::Chars => word.chars().count(),
             CountType::Words => 1,
         };
 
@@ -125,5 +124,5 @@ fn main() {
         column += word_width;
     }
 
-    w!("\n");
+    w!(".\n");
 }
